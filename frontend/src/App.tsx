@@ -1,8 +1,12 @@
 import './App.css'
 import {useEffect, useState} from "react";
 import axios from "axios";
+import {Route, Routes} from "react-router-dom";
+import ProtectedRoutes from "./ProtectedRoutes.tsx";
+import Login from "./Login.tsx";
+import Secured from "./Secured.tsx";
 
-type AppUser = {
+export type AppUser = {
     username: string,
     avatarUrl: string,
 }
@@ -23,25 +27,19 @@ function App() {
         getMe();
     }, []);
 
-    function login() {
-        const host = window.location.host === 'localhost:5173' ? 'http://localhost:8080' : window.location.origin
-        window.open(host + "/oauth2/authorization/github", '_self')
-    }
 
-    function logout() {
+    /*function logout() {
         const host = window.location.host === 'localhost:5173' ? 'http://localhost:8080' : window.location.origin
         window.open(host + "/logout", '_self')
-    }
-
-    if (appUser === undefined) return '...loading';
-    if (appUser === null) return <button onClick={login}>Login with Github</button>
+    }*/
 
     return (
-        <>
-            {appUser.username}
-            <img src={appUser.avatarUrl} alt={"Avatar"}/>
-            <button onClick={logout}>Logout</button>
-        </>
+        <Routes>
+            <Route path={"/login"} element={<Login/>}/>
+            <Route element={<ProtectedRoutes appUser={appUser}/>}>
+                <Route path={"/secured"} element={<Secured/>}/>
+            </Route>
+        </Routes>
     )
 }
 

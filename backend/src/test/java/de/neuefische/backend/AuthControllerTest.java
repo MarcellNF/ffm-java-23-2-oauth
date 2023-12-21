@@ -26,15 +26,18 @@ class AuthControllerTest {
     @Test
     @DirtiesContext
     void getMe() throws Exception {
-        AppUser appUser = new AppUser("testUser", "testAvatarUrl");
-        String appUserJson = objectMapper.writeValueAsString(appUser);
         mockMvc.perform(get("/api/auth/me").with(oidcLogin().userInfoToken(token -> token
                                 .claim("login", "testUser")
                                 .claim("avatar_url", "testAvatarUrl")
                         ))
                 )
                 .andExpect(status().isOk())
-                .andExpect(content().json(appUserJson));
+                .andExpect(content().json("""
+                        {
+                            "username": "testUser",
+                            "avatarUrl": "testAvatarUrl"
+                        }
+                        """));
     }
 
     @Test
